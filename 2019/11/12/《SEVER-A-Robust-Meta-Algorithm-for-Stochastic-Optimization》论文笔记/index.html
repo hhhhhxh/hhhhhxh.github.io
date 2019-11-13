@@ -11,7 +11,7 @@
 <li>仅适用于特定问题或特定的数据分布，在实际数据上的准确率不行</li>
 </ol>
 <p>整体来看，我们的算法是一个简单的异常值检测器插件——首先，运行可以正常运行的任何学习过程(如最小平方，线性回归)。然后，考虑最佳参数处的梯度矩阵，并计算该矩阵的顶部奇异向量。最后，删除所有在这个奇异向量上的投影太大的点(并且如果必要的话可以重新训练)，如下图所示。</p>
-<p><img src="../images/《SEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization》论文笔记/1.png" alt=""></p>
+<p><img src="/images/《SEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization》论文笔记/1.png" alt=""></p>
 <h1 id="Formal-Setting"><a href="#Formal-Setting" class="headerlink" title="Formal Setting"></a>Formal Setting</h1><p>首先考虑随机优化任务：对于函数$f$ : $H \to \mathbb{R}$，其真实分布为$p^*$</p>
 <p>目标是找到一个参数向量$w^* \in H$使得这个式子最小</p>
 <script type="math/tex; mode=display">\overline{f(w)} \overset{def}{=}\mathbb{E}_{f \sim p^{*}}[f(w)]</script><p>假设$H \subseteq \mathbb{R}^d$，为可能参数的空间</p>
@@ -44,8 +44,8 @@
 </ol>
 <p>我们可以通过奇异值分解来检测——如果1和2都成立，那么异常值应该是梯度矩阵中较大的奇异值的原因，这使我们能够检测到并去除它们。</p>
 <p>算法1中的伪代码更好的展示了这点。</p>
-<p><img src="../images/《SEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization》论文笔记/2.png" alt=""></p>
-<p><img src="../images/《SEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization》论文笔记/3.png" alt=""></p>
+<p><img src="/images/《SEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization》论文笔记/2.png" alt=""></p>
+<p><img src="/images/《SEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization》论文笔记/3.png" alt=""></p>
 <p>具体来说，我们描述该算法是如何在线性回归中发挥作用的。首先，我们会解出数据集上的最佳参数向量，不考虑鲁棒性的问题。</p>
 <p>具体来说，令$\hat{w}$为</p>
 <script type="math/tex; mode=display">\sum_{i=1}^{n} x_i(\hat{w} \cdot x_i - y_i)=0</script><p>的解，令梯度为0，根据我们的需要给出一个临界点。</p>
