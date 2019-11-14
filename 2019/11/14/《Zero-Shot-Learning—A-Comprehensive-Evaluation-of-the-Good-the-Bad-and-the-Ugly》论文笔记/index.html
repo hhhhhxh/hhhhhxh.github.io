@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>《Zero-Shot Learning—A Comprehensive Evaluation of the Good, the Bad and the Ugly》论文笔记 | hhhhhxh</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '7fa17d1076a1ae6cf7ec6cc0ad18ad46';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">《Zero-Shot Learning—A Comprehensive Evaluation of the Good, the Bad and the Ugly》论文笔记</h1><a id="logo" href="/.">hhhhhxh</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/photos/"><i class="fa fa-instagram"> 照片墙</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">《Zero-Shot Learning—A Comprehensive Evaluation of the Good, the Bad and the Ugly》论文笔记</h1><div class="post-meta">Nov 14, 2019<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" href="/2019/11/14/%E3%80%8AZero-Shot-Learning%E2%80%94A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly%E3%80%8B%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/#vcomment"><span class="valine-comment-count" data-xid="/2019/11/14/%E3%80%8AZero-Shot-Learning%E2%80%94A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly%E3%80%8B%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/"></span><span> 条评论</span></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Evaluated-Methods"><span class="toc-number">2.</span> <span class="toc-text">Evaluated Methods</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Learning-Linear-Compatibility"><span class="toc-number">2.1.</span> <span class="toc-text">Learning Linear Compatibility</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Learning-Nonlinear-Compatibility"><span class="toc-number">2.2.</span> <span class="toc-text">Learning Nonlinear Compatibility</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Learning-Intermediate-Attribute-Compatibility"><span class="toc-number">2.3.</span> <span class="toc-text">Learning Intermediate Attribute Compatibility</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hybrid-Models"><span class="toc-number">2.4.</span> <span class="toc-text">Hybrid Models</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Transductive-Zero-Shot-Learning-Setting"><span class="toc-number">2.5.</span> <span class="toc-text">Transductive Zero-Shot Learning Setting</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Datasets"><span class="toc-number">3.</span> <span class="toc-text">Datasets</span></a></li></ol></div></div><div class="post-content"><h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>这篇文章来自2019年的TPAMI，但是第一版是2017年发布的。这是一篇零样本学习(ZSL, Zero-Shot Learning)的综述性的文章，总结了当时的方法，提出了新的评价标准，对当时领域发展比较混乱的地方做出了一些更标准的评估。</p>
+<p>这篇文章做的事：</p>
+<ol>
+<li>通过统一评估准则和对公开数据集的划分来定义了一个新的基准。</li>
+<li>深度比较分析了许多ZSL和GZSL中的前沿方法。</li>
+<li>详细讨论了该领域当前的局限性，可以将其作为推进的基础。</li>
+</ol>
+<h1 id="Evaluated-Methods"><a href="#Evaluated-Methods" class="headerlink" title="Evaluated Methods"></a>Evaluated Methods</h1><p>首先，形式化的定义了ZSL任务：</p>
+<p>训练集$S=\{(x_n,y_n),n=1…N\}, y_n \in Y^{tr}$</p>
+<p>通过最小化正则经验风险</p>
+<script type="math/tex; mode=display">\frac{1}{N}\sum^{N}_{n=1}L(y_n,f(x_n;W))+\Omega(W)</script><p>来学习映射$f: X \to Y$</p>
+<p>其中</p>
+<script type="math/tex; mode=display">f(x;W)=argmax_{y \in Y}F(x,y;W)</script><p>所有的方法共被分为五类，分别是：</p>
+<ol>
+<li>线性通用方法的学习(Learning Linear Compatibility)</li>
+<li>非线性通用方法的学习(Learning Nonlinear Compatibility)</li>
+<li>中间属性分类器的学习(Learning Intermediate Attribute Classifiers)</li>
+<li>混合模型(Hybrid Models)</li>
+<li>直推式零样本学习(Transductive Zero-Shot Learning Setting)</li>
+</ol>
+<h2 id="Learning-Linear-Compatibility"><a href="#Learning-Linear-Compatibility" class="headerlink" title="Learning Linear Compatibility"></a>Learning Linear Compatibility</h2><p>共有五个方法，分别是：</p>
+<ol>
+<li>ALE</li>
+<li>DEVISE</li>
+<li>SJE</li>
+<li>ESZSL</li>
+<li>SAE</li>
+</ol>
+<p>ALE，DEVISE和SJE这三个方法用双线性通用函数(bi-linear compatibility function)来将视觉信息和辅助信息联系起来。</p>
+<p>ESZSL将平方损失应用于ranking函数上，并在非正规风险最小化公式后加上了隐含正则化项。</p>
+<p>SAE进一步限制了投影必须能够重建原始的图像向量(original image embedding)。</p>
+<h2 id="Learning-Nonlinear-Compatibility"><a href="#Learning-Nonlinear-Compatibility" class="headerlink" title="Learning Nonlinear Compatibility"></a>Learning Nonlinear Compatibility</h2><p>共有两个方法，分别是：</p>
+<ol>
+<li>LATEM</li>
+<li>CMT</li>
+</ol>
+<p>LATEM对线性通用的函数进行了分段，在每段都对不同的视觉特征进行建模。</p>
+<p>CMT首先将图像映射到单词的语义空间(即类名)中，用一个具有非线性函数tanh的神经网络去学习这个映射。接下来提出了新颖性检测机制(novelty detection mechanism)来将图像分到可见类或不可见类。</p>
+<h2 id="Learning-Intermediate-Attribute-Compatibility"><a href="#Learning-Intermediate-Attribute-Compatibility" class="headerlink" title="Learning Intermediate Attribute Compatibility"></a>Learning Intermediate Attribute Compatibility</h2><p>共有两个方法，分别是：</p>
+<ol>
+<li>DAP</li>
+<li>IAP</li>
+</ol>
+<p>DAP学习概率属性分类器，并通过组合学习到的属性分类器的分数来预测类别。</p>
+<p>IAP首先预测每个训练类别的概率，然后乘以类别属性矩阵。</p>
+<h2 id="Hybrid-Models"><a href="#Hybrid-Models" class="headerlink" title="Hybrid Models"></a>Hybrid Models</h2><p>共有四个方法，分别是：</p>
+<ol>
+<li>SSE</li>
+<li>CONSE</li>
+<li>SYNC</li>
+<li>GFZSL</li>
+</ol>
+<p>SSE在图像和语义空间中利用相似类的关系。</p>
+<p>CONSE学习训练图像属于训练类别的概率。</p>
+<p>SYNC学习到一个从语义类别空间到模型空间的映射。</p>
+<p>GFZSL通过将每个类条件分布建模为具有均值向量$\mu$和对角协方差矩阵$\sigma$的多元高斯分布模型来提出了一个零样本学习的生成式框架。</p>
+<h2 id="Transductive-Zero-Shot-Learning-Setting"><a href="#Transductive-Zero-Shot-Learning-Setting" class="headerlink" title="Transductive Zero-Shot Learning Setting"></a>Transductive Zero-Shot Learning Setting</h2><p>这是一种设置，更类似于GZSL，而不是一类方法。</p>
+<p>在这种设置下，有两种方法，以及一种将ALE的拓展方法，分别是：</p>
+<ol>
+<li>GFZSL-tran</li>
+<li>DSRL</li>
+<li>ALE-tran</li>
+</ol>
+<p>GFZSL-tran使用基于期望最大化(EM)的过程。</p>
+<p>DSRL提出同时：</p>
+<ol>
+<li>用非负矩阵分解学习图像特征</li>
+<li>将他们与其对应的类属性对齐</li>
+</ol>
+<p>ALE可以用于DSRL类似的方法，先计算出初始分数矩阵，再基于图的标签传播算法来改善这个分数矩阵用于预测。</p>
+<h1 id="Datasets"><a href="#Datasets" class="headerlink" title="Datasets"></a>Datasets</h1></div><div class="tags"></div><div class="post-nav"><a class="next" href="/2019/11/12/%E3%80%8ASEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization%E3%80%8B%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">《SEVER: A Robust Meta-Algorithm for Stochastic Optimization》论文笔记</a></div><div id="vcomment"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script><script>var notify = 'false' ? true : false;
+var verify = 'false' ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'OSUK7P1Utb45xOOhM0JJbTab-gzGzoHsz',
+  appKey:'0OAn3KMQOEbFWSQB5P17tM7h',
+  placeholder:'Just so so',
+  avatar:'mm',
+  guest_info:guest_info,
+  pageSize:'10'
+})</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://hhhhhxh.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E9%B8%A1%E6%B1%A4/" style="font-size: 15px;">鸡汤</a> <a href="/tags/%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/" style="font-size: 15px;">资料整理</a> <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" style="font-size: 15px;">论文笔记</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/11/14/%E3%80%8AZero-Shot-Learning%E2%80%94A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly%E3%80%8B%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">《Zero-Shot Learning—A Comprehensive Evaluation of the Good, the Bad and the Ugly》论文笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/11/12/%E3%80%8ASEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization%E3%80%8B%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">《SEVER: A Robust Meta-Algorithm for Stochastic Optimization》论文笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/11/10/%E5%85%B1%E5%8B%89/">共勉</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/29/git-lfs%E7%9A%84%E4%BD%BF%E7%94%A8/">git lfs的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/22/%E9%9B%B6%E6%A0%B7%E6%9C%AC%E5%AD%A6%E4%B9%A0ZSL%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/">零样本学习ZSL资料整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/18/%E8%A7%86%E8%A7%89%E9%97%AE%E7%AD%94VQA%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/">视觉问答VQA资料整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/07/hello-world/">Hello World</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">hhhhhxh.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
