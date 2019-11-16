@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title> | hhhhhxh</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + '7fa17d1076a1ae6cf7ec6cc0ad18ad46';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();</script></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">hhhhhxh</h1><a id="logo" href="/.">hhhhhxh</a><p class="description"></p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/photos/"><i class="fa fa-instagram"> 照片墙</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title"></h1><div class="post-content"><p>[TOC]</p>
+<h1 id="Datasets"><a href="#Datasets" class="headerlink" title="Datasets"></a>Datasets</h1><p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/table1.png" alt=""></p>
+<p>数据集共有六个，作者认为aPY是小型数据集，SUN,CUB,AWA1,AWA2是中型数据集，ImageNet是大型数据集。其中值得一提的是AWA2是AWA1的升级版，是由作者给出的，与AWA1的类别一致，但是图片不一样。除了解决了版权问题之外，AWA2包含了更多的图片，在ResNet特征下的分布也更加明显。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/figure2.png" style="zoom:50%;" /></p>
+<p>而在大型数据集ImageNet中，总共有21K个类别，包含1400万张图片。它根据WordNet对类别进行了分层(hierarchically related)。此外，它的数据分布离散度(granularity)是多种多样的，图片最多的类别有3047张图片，而图片最少的类别只有1张图片。</p>
+<p>它的一个有1K个类别的平衡(分布均匀)的子集被拿来训练一个CNN。</p>
+<h1 id="Evaluation-Protocol"><a href="#Evaluation-Protocol" class="headerlink" title="Evaluation Protocol"></a>Evaluation Protocol</h1><p>提出了一些评估方法，分为三个部分：</p>
+<ol>
+<li>图片和类别向量(Image and Class Embedding)</li>
+<li>数据集的分割(Dataset Splits)</li>
+<li>评估标准(Evaluation Criteria)</li>
+</ol>
+<h2 id="Image-and-Class-Embedding"><a href="#Image-and-Class-Embedding" class="headerlink" title="Image and Class Embedding"></a>Image and Class Embedding</h2><p>图片向量(Image Embedding)是101层ResNet的顶部pooling层输出的2048维向量，我们发现这比GoogLeNet顶部的pooling层输出的1024维向量的效果要好。</p>
+<p>我们用ImageNet中经过训练的1K个类别的分布均匀的子集来训练一个原始的ResNet-101网络，并且不再针对任何提到的数据集来对其进行微调。</p>
+<p>对于数据集aPY,AWA1,AWA2,CUB和SUN，我们使用数据集中提供的0-1之间的类属性(per-class attributes)，因为已经被证明了二分类属性比连续属性要弱。</p>
+<p>而对于数据集ImageNet，因为不存在21K个类别的属性，因此我们用在wikipedia上训练的word2vec。而对类别向量的评估超出了这篇论文的范围，因此不过多阐述。</p>
+<h2 id="Dataset-Splits"><a href="#Dataset-Splits" class="headerlink" title="Dataset Splits"></a>Dataset Splits</h2><p>按ZSL的定义来说，训练集中不应包含任何的测试类别。而由于用于图像特征提取的DNN(ResNet-101)的训练本质上是模型训练的一部分，因此用于训练DNN的数据集(例如ImageNet)中不应包含任何测试类别。</p>
+<p>但是，标准分割(SS, Standard Split)将ImageNet的1K类中的一些测试类别分割出来用于对ResNet进行预训练。</p>
+<p>而我们注意到，在那些重复的测试类上，所有方法的准确性都偏高。</p>
+<p>因此，我们提出了新的数据分割方式(PS, Proposed Split)，保证了任何测试类别都不会在ImageNet 1K，也就是用于训练ResNet模型的数据中出现。</p>
+<p>在下图中可以看到SS和PS的不同之处。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/table1.png" alt=""></p>
+<p>在SS和PS中训练时都不会出现来自测试类别的图像。而在评估时，PS中包含训练类别的图像。这么设计PS是因为评估在训练类别和测试类别这两者对展示模型的泛化性能非常重要。</p>
+<p>简单来说，我们将SS和PS的类别数量保持相同，但是我们选择不同的类别进行分割，并同时确保测试类别与ImageNet的1K个训练类别不重复。</p>
+<p><a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Changpinyo_Synthesized_Classifiers_for_CVPR_2016_paper.pdf" target="_blank" rel="noopener">[14]</a>中提出的ImageNet的SS根据ImageNet的标签层次结构考虑与原始(训练特征分类器的)1K类相距2-hops和3-hops的所有类，分别有1509和7678个类别。这种分割测量了模型关于层次结构和类间语义相似性的泛化性能。</p>
+<p>而ImageNet的另一个特点是样本分布不均衡。因此我们建议的拆分方法是考虑剩余的21K(应该是20K?)个类别中样本数前500，1K和5K多的类别。类似地，我们考虑ImageNet中样本数前500，1K和5K少的类别。</p>
+<p>此外，我们通过考虑ImageNet的所有剩余的20K个类别的最终划分来衡量方法对整个ImageNet数据分布的泛化性能。</p>
+<h2 id="Evaluation-Criteria"><a href="#Evaluation-Criteria" class="headerlink" title="Evaluation Criteria"></a>Evaluation Criteria</h2><p>单标签图像分类的准确性已通过Top-1准确性进行了衡量，即当预测的类别为正确类别时，预测就是准确的。</p>
+<p>如果准确率对所有图片都是平均的，那么在样本数更多的类别上更容易有好的性能。</p>
+<p>但是，我们同样希望在样本数较少的类别上也能实现高性能。因此，我们将每个类别的正确预测独立平均后再除以类别数量的累计总和，即我们通过以下方式测量平均每个类别的top-1准确性：</p>
+<script type="math/tex; mode=display">acc_y=\frac{1}{||Y||}\sum_{c=1}^{||Y||}\frac{\# correct \; predictions \; in \; c}{\# samples \;in\; c}</script><p>与测试时的PS一样，我们能够获得训练集中的图像。在计算出训练类别和测试类别平均每类的top-1准确性之后，我们可以计算训练和测试准确性的调和平均值：</p>
+<script type="math/tex; mode=display">H=\frac{2 \cdot acc_{y^{tr}} \cdot acc_{y^{ts}}}{acc_{y^{tr}}+acc_{y^{ts}}}</script><p>选择调和平均的原因是如果用算术平均，当可见类的准确率高的多时，会对整体结果产生显著影响。</p>
+<h1 id="Experiments"><a href="#Experiments" class="headerlink" title="Experiments"></a>Experiments</h1><h2 id="Zero-Shot-Learning-Experiments"><a href="#Zero-Shot-Learning-Experiments" class="headerlink" title="Zero-Shot Learning Experiments"></a>Zero-Shot Learning Experiments</h2><h3 id="前沿方法的比较试验"><a href="#前沿方法的比较试验" class="headerlink" title="前沿方法的比较试验"></a>前沿方法的比较试验</h3><p>1) 完整性检查，用公众能得到的特征和代码来在SUN,CUB,AWA1和aPY上重新评估这些方法。</p>
+<p>2) 我们复现了DEVISE, CONSE和ALE，加上了Deep ResNet特征，并分别用Table 1中的SS分割方式，将结果进行比较。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/table2.png" style="zoom:50%;" /></p>
+<h3 id="SS和PS的对比试验"><a href="#SS和PS的对比试验" class="headerlink" title="SS和PS的对比试验"></a>SS和PS的对比试验</h3><p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/table3.png" style="zoom:50%;" /></p>
+<h3 id="鲁棒性测试"><a href="#鲁棒性测试" class="headerlink" title="鲁棒性测试"></a>鲁棒性测试</h3><p>为了评估13种方法对超参数的鲁棒性，分别为他们设置三种不同的验证集划分，同时保持测试集划分不变。在Figure 3中，上面是SS的结果，下面是PS的结果。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/figure3.png" alt=""></p>
+<h3 id="方法排名可视化"><a href="#方法排名可视化" class="headerlink" title="方法排名可视化"></a>方法排名可视化</h3><p>首先根据前面实验的三种不同的验证集划分来评估这13种方法。然后我们使用非参数弗里德曼检验(non-parametric Friedman test)基于他们的每类top-1准确性对它们进行排名，该检验不假设性能分布，而是使用算法进行排名。</p>
+<p>Figure 4中排名矩阵的每一条表示的是这个方法排这个名次的次数。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/figure4.png" style="zoom:50%;" /></p>
+<h3 id="在AWA2上的结果"><a href="#在AWA2上的结果" class="headerlink" title="在AWA2上的结果"></a>在AWA2上的结果</h3><p>为了证明AWA1和AWA2的图像是不同的但本质上是相似的，我们在Table 3中比较了AWA1和AWA2的零样本学习结果。由于AWA1和AWA2的类别和属性是一样的，为了验证AWA2是AWA1的良好替代品，我们对12种方法进行了跨数据集评估。</p>
+<p>此外，注意到交叉数据集的结果取决于训练集。如对于所有的方法，如果我们将AWA1固定为训练集，则AWA1和AWA2的测试集上的结果很接近。因此为了验证这个假设，采用配对t检验来判断配对的结果之间是否有明显的不同。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/table4.png" style="zoom:50%;" /></p>
+<h3 id="在ImageNet上的零样本学习结果"><a href="#在ImageNet上的零样本学习结果" class="headerlink" title="在ImageNet上的零样本学习结果"></a>在ImageNet上的零样本学习结果</h3><p>去掉了DAP和IAP，因为ImageNet类别上的属性不可用。还有SSE，因为该方法的公开实现的可扩展性问题。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/table5.png" style="zoom:50%;" /></p>
+<p>图片经常会包含数个对象但是在ImageNet中只有一个标签，因此我们提供了9个模型的top-1，top-5和top-10准确率。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/figure5.png" alt=""></p>
+<h2 id="Generalized-Zero-Shot-Learning-Results"><a href="#Generalized-Zero-Shot-Learning-Results" class="headerlink" title="Generalized Zero-Shot Learning Results"></a>Generalized Zero-Shot Learning Results</h2><h3 id="广义零样本学习的结果"><a href="#广义零样本学习的结果" class="headerlink" title="广义零样本学习的结果"></a>广义零样本学习的结果</h3><p>我们使用在PS上经过ZSL设置下训练的相同的模型。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/table6.png" alt=""></p>
+<p>以及ImageNet上GZSL的top-1，top-5和top-10准确率的结果。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/figure6.png" alt=""></p>
+<h3 id="方法排名可视化-1"><a href="#方法排名可视化-1" class="headerlink" title="方法排名可视化"></a>方法排名可视化</h3><p>类似于上一节中对零样本学习进行的分析，我们根据在 SUN，CUB，AWA1，AWA2和 aPY上获得的结果对13种方法进 行排名。 该性能是根据已知类 (seen classes)，未知类(unseen classes)和两者的调和平均值来衡 量的</p>
+<p>类似之前的分析，根据在SUN,CUB,AWA1,AWA2和aPY上得到的结果对这13种方法进行排名。该性能是根据已知类上的准确率，未知类上的准确率和两者的调和平均来衡量的。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/figure7.png" style="zoom:50%;" /> </p>
+<h3 id="直推式的-广义-零样本学习"><a href="#直推式的-广义-零样本学习" class="headerlink" title="直推式的(广义)零样本学习"></a>直推式的(广义)零样本学习</h3><p>与之前的零样本学习方法仅从训练类别中学习数据相反，直推式方法使用了测试类别中未标记的图像的信息</p>
+<p>我们在PS上评估了这些方法，性能是按照类别平均的top-1准确率计算。</p>
+<p><img src="./images/《Zero-Shot-Learning—A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly》论文笔记/figure8.png" style="zoom:50%;" /> </p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><ol>
+<li><p>我们在零样本学习和广义零样本学习的设置下，在统一了评估方法(evaluation protocol)的多个数据集上评估了大量最新的零样本学习方法。</p>
+<p>我们的评估表明，生成模型(generative models)和通用学习框架(compatibility learning frameworks)在学习独立的对象或属性分类器方面以及在传统零样本学习设置的其他混合模型方面均具有优势。</p>
+<p>我们观察到未知类别的未标记数据可以进一步改善零样本学习结果，因此将直推式学习方法(transductive learning approaches)与非直推式学习方法(inductive ones)进行比较是不公平的。</p>
+</li>
+<li><p>我们发现一些标准的零样本数据集分割可能会使特征学习与训练阶段脱节，因为 ImageNet1K数据集中包含了几个测试类，这些类用于训练充当特征提取器的深度神经网络。因此，我们提出了新的数据集分割方式，以确保所有数据集中的所有测试类别都不在ImageNet1K中。</p>
+<p>不相交的训练和验证类别分割方式是零样本学习设置中参数调整的必要组成部分。</p>
+</li>
+<li><p>我们引入了一个新数据集AWA2(Animal With Attributes 2)。</p>
+<p>AWA2从AWA1数据集中继承了相同的50个类和属性注释(attributes annotations)，但由具有公共重新分配许可证(publicly available redistribution license)的37322张不同的图像组成。</p>
+<p>我们的实验结果表明，我们评估的12种方法在AWA2和AWA1上的性能相似。此外，我们的统计一致性检验(statistical consistency test)表明AWA1和AWA2彼此兼容。</p>
+</li>
+<li><p>广义零样本学习为将来的研究提供了一个有趣的背景。</p>
+<p>注意到一些模型在测试集仅由可见类(seen classes)组成时表现良好，而另一些模型在测试集仅由未知类(unseen classes)组成时表现良好，我们提出了可见类和未知类准确率的调和平均值作为对GZSL设置中的性能的统一的度量。</p>
+<p>调和均值希望模型在可见类和未知类的样本上均表现良好，这更接近于实际环境。</p>
+</li>
+</ol>
+</div></div><div id="vcomment"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script><script>var notify = 'false' ? true : false;
+var verify = 'false' ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'OSUK7P1Utb45xOOhM0JJbTab-gzGzoHsz',
+  appKey:'0OAn3KMQOEbFWSQB5P17tM7h',
+  placeholder:'Just so so',
+  avatar:'mm',
+  guest_info:guest_info,
+  pageSize:'10'
+})</script></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://hhhhhxh.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E9%B8%A1%E6%B1%A4/" style="font-size: 15px;">鸡汤</a> <a href="/tags/%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/" style="font-size: 15px;">资料整理</a> <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" style="font-size: 15px;">论文笔记</a> <a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 15px;">随笔</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/11/16/%E9%9A%8F%E7%AC%94/">随笔</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/11/14/%E3%80%8AZero-Shot-Learning%E2%80%94A-Comprehensive-Evaluation-of-the-Good-the-Bad-and-the-Ugly%E3%80%8B%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">《Zero-Shot Learning—A Comprehensive Evaluation of the Good, the Bad and the Ugly》论文笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/11/12/%E3%80%8ASEVER-A-Robust-Meta-Algorithm-for-Stochastic-Optimization%E3%80%8B%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">《SEVER: A Robust Meta-Algorithm for Stochastic Optimization》论文笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/11/10/%E5%85%B1%E5%8B%89/">共勉</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/29/git-lfs%E7%9A%84%E4%BD%BF%E7%94%A8/">git lfs的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/22/%E9%9B%B6%E6%A0%B7%E6%9C%AC%E5%AD%A6%E4%B9%A0ZSL%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/">零样本学习ZSL资料整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/18/%E8%A7%86%E8%A7%89%E9%97%AE%E7%AD%94VQA%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/">视觉问答VQA资料整理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/10/07/hello-world/">Hello World</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">hhhhhxh.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
